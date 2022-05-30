@@ -38,4 +38,23 @@ public class ClientService {
 		return dto;
 	}
 	
+	public ClientDTO insert(ClientDTO dto) {
+		Client entity = new Client();
+		
+		setarCampos(entity, dto);
+		
+		entity = repository.save(entity);
+		
+		return new ClientDTO(entity);
+	}
+	
+	private void setarCampos(Client entity, ClientDTO dto) {
+		entity.setId(dto.getId());
+		entity.setName(dto.getName());
+		entity.setCpf(dto.getCpf());
+		entity.setIncome(dto.getIncome());
+		entity.setBirthDate(dto.getBirthDate());
+		entity.setChildren(dto.getChildren());
+	}
+	
 }
