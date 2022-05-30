@@ -1,11 +1,14 @@
 package com.vanbarone.vbcadcli.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.vanbarone.vbcadcli.dto.ClientDTO;
 import com.vanbarone.vbcadcli.entities.Client;
 import com.vanbarone.vbcadcli.repositories.ClientRepository;
 
@@ -15,19 +18,24 @@ public class ClientService {
 	@Autowired
 	private ClientRepository repository;
 	
-	public List<Client> findAll(){
+	public List<ClientDTO> findAll(){
 		List<Client> list = repository.findAll();
-		return list;
+		
+		List<ClientDTO> listDTO = new ArrayList<>();
+		
+		listDTO = list.stream().map(x -> new ClientDTO(x)).collect(Collectors.toList());
+		
+		return listDTO;
 	}
 	
-	public Client findById(Long id) {
+	public ClientDTO findById(Long id) {
 		Optional<Client> obj = repository.findById(id);
 		
-		Client entity = obj.get();
+		ClientDTO dto = new ClientDTO(obj.get());
 		
 		//Category entity = obj.orElseThrow(() -> new EntityNotFoundException("Entity not found"));
 		
-		return entity;
+		return dto;
 	}
 	
 }

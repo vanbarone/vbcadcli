@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.vanbarone.vbcadcli.entities.Client;
+import com.vanbarone.vbcadcli.dto.ClientDTO;
 import com.vanbarone.vbcadcli.services.ClientService;
 
 @RestController
@@ -20,17 +20,17 @@ public class ClientResource {
 	private ClientService service;
 
 	@GetMapping
-	public ResponseEntity<List<Client>> findAll(){
+	public ResponseEntity<List<ClientDTO>> findAll(){
 		
-		List<Client> lista = service.findAll();
+		List<ClientDTO> lista = service.findAll();
 		
 		return ResponseEntity.ok().body(lista);
 	}
 	
 	@GetMapping(value = "/{id}") 
-	public ResponseEntity<Client> findById(@PathVariable Long id){
-		Client cliente = service.findById(id);
+	public ResponseEntity<ClientDTO> findById(@PathVariable Long id){
+		ClientDTO dto = service.findById(id);
 		
-		return ResponseEntity.ok().body(cliente);
+		return ResponseEntity.ok().body(dto);
 	}
 }
