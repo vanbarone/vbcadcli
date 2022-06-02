@@ -6,6 +6,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,13 @@ public class ClientService {
 		listDTO = list.stream().map(x -> new ClientDTO(x)).collect(Collectors.toList());
 		
 		return listDTO;
+	}
+	
+	@Transactional(readOnly = true)
+	public Page<ClientDTO> findAllPaged(PageRequest pageRequest){
+		Page<Client> list = repo.findAll(pageRequest);
+		
+		return list.map(x -> new ClientDTO(x));
 	}
 	
 	@Transactional(readOnly = true)
@@ -68,6 +77,7 @@ public class ClientService {
 		//}
 	}
 	
+	@Transactional
 	public void delete(Long id) {
 		repo.deleteById(id);
 	}
