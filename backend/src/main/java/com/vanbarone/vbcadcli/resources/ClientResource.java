@@ -30,11 +30,11 @@ public class ClientResource {
 
 	@GetMapping
 	public ResponseEntity<Page<ClientDTO>> findAll(@RequestParam(value = "page", defaultValue = "0") Integer page, 
-											       @RequestParam(value = "lines", defaultValue = "5") Integer linesPerPage, 
+											       @RequestParam(value = "linesPerPage", defaultValue = "5") Integer linesPerPage, 
 			                                       @RequestParam(value = "direction", defaultValue = "ASC") String direction,
-			                                       @RequestParam(value = "order", defaultValue = "name") String ordenation){
+			                                       @RequestParam(value = "orderBy", defaultValue = "name") String orderBy){
 		
-		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), ordenation);
+		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		
 		Page<ClientDTO> lista = service.findAllPaged(pageRequest);      
 				

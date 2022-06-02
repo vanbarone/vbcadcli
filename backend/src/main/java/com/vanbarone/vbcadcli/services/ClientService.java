@@ -5,7 +5,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -14,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.vanbarone.vbcadcli.dto.ClientDTO;
 import com.vanbarone.vbcadcli.entities.Client;
 import com.vanbarone.vbcadcli.repositories.ClientRepository;
+import com.vanbarone.vbcadcli.services.exceptions.ExceptionDatabase;
+import com.vanbarone.vbcadcli.services.exceptions.ExceptionEntityNotFound;
 
 @Service
 public class ClientService {
@@ -43,11 +49,9 @@ public class ClientService {
 	public ClientDTO findById(Long id) {
 		Optional<Client> obj = repo.findById(id);
 		
-		ClientDTO dto = new ClientDTO(obj.get());
+		Client entity = obj.orElseThrow(() -> new ExceptionEntityNotFound("Entity not found"));
 		
-		//Category entity = obj.orElseThrow(() -> new EntityNotFoundException("Entity not found"));
-		
-		return dto;
+		return new ClientDTO(entity);
 	}
 	
 	@Transactional
@@ -63,8 +67,8 @@ public class ClientService {
 	
 	@Transactional
 	public ClientDTO update(Long id, ClientDTO dto) {
-		//try {
-			Client entity = repo.getOne(id);
+		try {
+			Client entity = repo.getReferenceById(id);
 			
 			setarCampos(entity, dto);
 			
@@ -72,14 +76,20 @@ public class ClientService {
 			
 			return new ClientDTO(entity);
 			
-		//} catch (EntityNotFoundException e) {
-		//	throw new ResourceNotFoundException("Id not found " + id);
-		//}
+		} catch (EntityNotFoundException e) {
+			throw new ExceptionEntityNotFound("Id not found " + id);
+		}
 	}
 	
 	@Transactional
 	public void delete(Long id) {
-		repo.deleteById(id);
+		try {
+			repo.deleteById(id);
+		} catch (EmptyResultDataAccessException e) {
+			throw new ExceptionEntityNotFound("Id not found: " + id);
+		} catch (DataIntegrityViolationException e) {
+			throw new ExceptionDatabase("Integrity violation");
+		}
 	}
 	
 	private void setarCampos(Client entity, ClientDTO dto) {
